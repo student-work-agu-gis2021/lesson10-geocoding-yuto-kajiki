@@ -65,20 +65,26 @@ print(geodata.head())
 # Define output filepath
 out_fp = None
 # YOUR CODE HERE 5 to save the output
-
+outfp = r"shopping_centers.shp"
+ # Save to Shapefile
+join = geo.join(data)
+join.head()
+join.to_file(outfp)
 # TEST CODE
 # Print info about output file
 print("Geocoded output is stored in this file:", out_fp)
 
 
-# ## Problem 2: Create buffers around shopping centers
+# ## Problem 2: Create buffegeodata['buffer']=Noners around shopping centers
 # 
 # Let's continue with our case study and calculate a 1.5 km buffer around the geocoded points. 
  
 
 # YOUR CODE HERE 6 to create a new column
-
+geodata['buffer']=None
 # YOUR CODE HERE 7 to set buffer column
+geodata.crs = CRS.from_epsg(32634).to_wkt()
+geodata['buffer'] =geodata.buffer(1500)
 
 #TEST CODE
 print(geodata.head())
@@ -96,7 +102,7 @@ print(round(gpd.GeoSeries(geodata["buffer"]).area / 1000000))
 # - Replace the values in `geometry` column with the values of `buffer` column:
 
 # YOUR CODE HERE 8 to replace the values in geometry
-
+geodata['geometry'] = geodata['buffer']
 #TEST CODE
 print(geodata.head())
 
@@ -108,10 +114,13 @@ print(geodata.head())
 
 # YOUR CODE HERE 9
 # Read population grid data for 2018 into a variable `pop`. 
-
+read_pop = r'data/500m_mesh_suikei_2018_shape_13/500m_mesh_2018_13.shp'
+pop = gpd.read_file(read_pop)
+# make two columns to select population
+pop = pop[['PTN_2020', 'geometry']]
 #TEST CODE
 # Check your input data
-print("Number of rows:", len(pop))
+print("Number of rows:", len(pop)) #5311
 print(pop.head(3))
 
 
@@ -120,9 +129,17 @@ print(pop.head(3))
 
 # Create a spatial join between grid layer and buffer layer. 
 # YOUR CDOE HERE 10 for spatial join
-
+pop.crs = CRS.from_epsg(32634).to_wkt()
 
 # YOUR CODE HERE 11 to report how many people live within 1.5 km distance from each shopping center
+join = gpd.sjoin(geodata, pop, how = 'inner', op = 'intersects')
+grouped = join.groupby(['name'])
+#I must install "rtree"& "geopandas" $"geopy"
+#count the number of people
+sum=0.0
+for key, group in grouped:
+  sum=round(group['PTN_2020'].sum())
+print("the number of people who live within 1.5 km :", sum) #sum ⇒ 13732951
 
 # **Reflections:**
 #     
@@ -131,5 +148,10 @@ print(pop.head(3))
 # - What was difficult?
 
 # YOUR ANSWER HERE
-
+"""
+Challenging :5
+It was hard for me, but I did my best.
+I'm not sure the answer was correct or not, because there are many places "Tokyu store" and "National Azabu"  in Tokyo.
+To report how many people live within 1.5 km distance from each shopping center in CODE11 was difficult.
+"""
 # Well done!
