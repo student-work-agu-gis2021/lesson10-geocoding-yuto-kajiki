@@ -29,7 +29,26 @@ from geopandas.tools import geocode
 
 # Geocode addresses using Nominatim. Remember to provide a custom "application name" in the user_agent parameter!
 #YOUR CODE HERE 2 for geocoding
+geo = geocode(data['addr'], provider='nominatim', user_agent='autogis_xx', timeout=4)
+"""
+from geopy.geocoders import Nominatim
+from geopy.extra.rate_limiter import RateLimiter
+from shapely.geometry import Point
+# Initiate geocoder
+geolocator = Nominatim(user_agent='autogis_xx')
 
+# Create a geopy rate limiter:
+geocode_with_delay = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+
+# Apply the geocoder with delay using the rate limiter:
+data['temp'] = data['addr'].apply(geocode_with_delay)
+
+# Get point coordinates from the GeoPy location object on each row:
+data["coords"] = data['temp'].apply(lambda loc: tuple(loc.point) if loc else None)
+
+# Create shapely point objects to geometry column:
+data["geometry"] = data["coords"].apply(Point)
+"""
 #TEST CODE
 # Check the geocoded output
 print(geo)

@@ -1,0 +1,4 @@
+id;addr
+1000;Tokyu Department Store, 2 Chome-24-1 Dogenzaka, Shibuya City, Tokyo 150-8019
+1001;Seibu Shibuya Store,21-1 Udagawacho, Shibuya City, Tokyo 150-8330
+1002;National Azabu,4 Chome-5-2 Minamiazabu, Minato City, Tokyo 106-0047
